@@ -11,7 +11,8 @@ hago esto en mis tiempos libres pa aprender c y al arte del...
 bueno, el proposito de esto es distorsionar guitarras electricas (o lo k sea, en realidad). 
 más especificamente es un "soft clip" overdrive.
 
-aqui hay una prueba de sonido.
+aqui hay una prueba de sonido. 
+*(acuerdate de activar el sonido)*
 
 https://github.com/user-attachments/assets/42701dfd-34c0-4c4c-8fd9-a63af31835f8
 
