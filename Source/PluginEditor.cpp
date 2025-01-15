@@ -140,6 +140,7 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mInputVolumeLabel.setText("MI MOTORA", dontSendNotification);
 	mInputVolumeLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mInputVolumeLabel);
+
 	// Slider
 	mInputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	mInputVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
@@ -148,12 +149,15 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::inputVolume, mInputVolumeSlider));
 	addAndMakeVisible(mInputVolumeSlider);
 
+	//	ComboBox
 	mSelector.setText("selector", dontSendNotification);
 	mSelector.setJustificationType(Justification::centred);
 	mSelector.addItem("gScreamer", 1);
 	mSelector.addItem("trebleBrigther", 2);
 	mSelector.addItem("bSquasher", 3);
 	addAndMakeVisible(mSelector);
+
+
 	/** LOWPASS FILTER =================================
 	// Label
 	mLowPassLabel.setText("LOW", dontSendNotification);
