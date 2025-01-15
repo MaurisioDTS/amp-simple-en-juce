@@ -1,11 +1,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Distortion.h"
 
-//==============================================================================
-Distortion::Distortion(AudioProcessorValueTreeState& vt)
-	: mParameters(vt),
 
-	mWaveShapers{ { std::tanh} },
+//==============================================================================
+Distortion::Distortion(AudioProcessorValueTreeState& vt): mParameters(vt),
+
+	mWaveShapers{ { [](float x) { return std::tanh(7.0f * x); } } },
 	mLowPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(44100.f, 20000.f)),
 	mHighPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(44100.f, 20.f))
 {
@@ -66,15 +66,11 @@ void Distortion::updateParameters()
 {
 	float inputVolume = *mParameters.getRawParameterValue(IDs::inputVolume);
 	float outputVolume = *mParameters.getRawParameterValue(IDs::outputVolume);
+	int mode = *mParameters.getRawParameterValue(IDs::selector);
 
 	auto inputdB = Decibels::decibelsToGain(inputVolume);
 	auto outputdB = Decibels::decibelsToGain(outputVolume);
 
 	if (mInputVolume.getGainLinear() != inputdB)     mInputVolume.setGainLinear(inputdB);
 	if (mOutputVolume.getGainLinear() != outputdB)   mOutputVolume.setGainLinear(outputdB);
-
-	float freqLowPass = *mParameters.getRawParameterValue(IDs::LPFreq);
-	*mLowPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(mSampleRate, freqLowPass);
-	float freqHighPass = *mParameters.getRawParameterValue(IDs::HPFreq);
-	*mHighPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(mSampleRate, freqHighPass);
 }

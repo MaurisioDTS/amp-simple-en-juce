@@ -35,6 +35,7 @@ private:
 	dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> mLowPassFilter, mHighPassFilter;
 	std::unique_ptr<dsp::Oversampling<float>> mOversampling;
 	dsp::Gain<float> mInputVolume, mOutputVolume;
+	int mSelector;
 
 	float mSampleRate = 44100.f;
 	uint32 mMaxBlockSize = 512;

@@ -41,19 +41,14 @@ private:
 
 	// Sliders
 	Slider mInputVolumeSlider;
-	Slider mHighPassSlider;
-	Slider mLowPassSlider;
     Slider mOutputVolumeSlider;
-	Slider mWetDrySlider;
 
+	//	ComboBox
 	ComboBox mSelector;
 
 	// Labels
 	Label mInputVolumeLabel;
-	Label mHighPassLabel;
-	Label mLowPassLabel;
     Label mOutputVolumeLabel;
-	Label mWetDryLabel;
 
     // LAF 
     KnobLookAndFeel knobLookAndFeel;
@@ -63,10 +58,19 @@ private:
 	int mTextBoxWidth = 120;
 
 	std::unique_ptr<SliderAttachment> mInputVolumeAttachment;
-	std::unique_ptr<SliderAttachment> mHighPassAttachment;
-	std::unique_ptr<SliderAttachment> mLowPassAttachment;
     std::unique_ptr<SliderAttachment> mOutputVolumeAttachment;
-	std::unique_ptr<SliderAttachment> mWetDryAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessorEditor)
 };
+
+// ============================================
+// puta mierda 
+/*
+	std::make_unique<AudioParameterChoice>(
+		IDs::selector,
+		"MODO",
+		StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },  // Las tres opciones que tendrá el selector
+		0,                                // Valor inicial, en este caso "Opción 1" (índice 0)
+		AudioProcessorParameter::genericParameter
+	),
+*/

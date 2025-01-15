@@ -25,10 +25,7 @@ DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
 	// Set the LOF of all sliders to nullptr
     mInputVolumeSlider.setLookAndFeel(nullptr);
 	mSelector.setLookAndFeel(nullptr);
-    mWetDrySlider.setLookAndFeel(nullptr);
     mOutputVolumeSlider.setLookAndFeel(nullptr);
-	mLowPassSlider.setLookAndFeel(nullptr);
-	mHighPassSlider.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -58,26 +55,6 @@ void DistortionAudioProcessorEditor::resized()
                               makeRotarySlider(mOutputVolumeSlider)
 							  });
 
-	// LOW ===================================
-    FlexBox lowBox;
-    lowBox.alignContent = FlexBox::AlignContent::center;
-    lowBox.justifyContent = FlexBox::JustifyContent::center;
-    lowBox.flexDirection = FlexBox::Direction::column;
-    lowBox.items.addArray({
-							makeLabel(mLowPassLabel),
-                            makeRotarySlider(mLowPassSlider)
-						   });
-
-	// HIGH ==================================
-    FlexBox highBox;
-    highBox.alignContent = FlexBox::AlignContent::center;
-    highBox.justifyContent = FlexBox::JustifyContent::center;
-    highBox.flexDirection = FlexBox::Direction::column;
-    highBox.items.addArray({
-							makeLabel(mHighPassLabel),
-                            makeRotarySlider(mHighPassSlider)
-							});
-
 	// DIST ==================================
 	FlexBox gainBox;
 	gainBox.alignContent = FlexBox::AlignContent::center;
@@ -93,16 +70,6 @@ void DistortionAudioProcessorEditor::resized()
 	selectorBox.alignContent = FlexBox::AlignContent::center;
 	selectorBox.justifyContent = FlexBox::JustifyContent::center;
 	selectorBox.flexDirection = FlexBox::Direction::column;
-
-	// WET/DRY ===============================
-	FlexBox wetDryBox;
-	wetDryBox.alignContent = FlexBox::AlignContent::center;
-	wetDryBox.justifyContent = FlexBox::JustifyContent::center;
-	wetDryBox.flexDirection = FlexBox::Direction::column;
-	wetDryBox.items.addArray({ 
-							   makeLabel(mWetDryLabel),
-							   makeRotarySlider(mWetDrySlider)
-                              });
     
 	// MASTER ================================
 	FlexBox masterBox;
@@ -112,8 +79,6 @@ void DistortionAudioProcessorEditor::resized()
 	masterBox.items.addArray({
 							   FlexItem(volumeBox).withFlex(1),
 							   FlexItem(selectorBox).withFlex(1),
-							   FlexItem(lowBox).withFlex(1),
-							   FlexItem(highBox).withFlex(1),
 							   FlexItem(gainBox).withFlex(1)
                              });
 

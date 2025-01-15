@@ -42,33 +42,12 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
 													nullptr
 													),
-			  std::make_unique<AudioParameterFloat>(IDs::HPFreq,
-													"Pre Highpass Freq",
-													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
-													0.f,
-													" Hz",
-													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
-													nullptr
-													),
-			  std::make_unique<AudioParameterFloat>(IDs::LPFreq,
-													"Post Lowpass Freq",
-													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
-													20000.f,
-													" Hz",
-													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
-													nullptr
-													),
-			  std::make_unique<AudioParameterFloat>(IDs::wetDry,
-													"Mix",
-													NormalisableRange<float>(0.f, 1.f),
-													0.5,
-													String(),
-													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													nullptr
-													) 
+			  std::make_unique<AudioParameterChoice>(IDs::selector,
+													"MODO",
+													StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },
+													0,                  
+													AudioProcessorParameter::genericParameter
+													)
 			}),
 		mDistortion(mParameters)
 #endif
