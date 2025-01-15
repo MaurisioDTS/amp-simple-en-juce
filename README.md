@@ -6,6 +6,9 @@ hago esto en mis tiempos libres pa aprender c y al arte del...
 
 ***digital signal processing***.
 
+![image](https://github.com/user-attachments/assets/a193807f-ed3b-4a8f-b8ea-5bee95fd8a9e)
+
+
 ## esto pa k es
 
 bueno, el proposito de esto es distorsionar guitarras electricas (o lo k sea, en realidad). 
