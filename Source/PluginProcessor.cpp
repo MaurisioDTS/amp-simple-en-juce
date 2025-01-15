@@ -46,7 +46,16 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													"MODO",
 													StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },
 													0,                  
-													AudioProcessorParameter::genericParameter
+													"modo",
+													[](int value, int) {
+														switch (value) {
+															case 0: return "gScreamer";
+															case 1: return "trebleBrigther";
+															case 2: return "bSquasher";
+															default: return "pos no sé mi loco";
+															}
+														},
+													nullptr
 													)
 			}),
 		mDistortion(mParameters)
