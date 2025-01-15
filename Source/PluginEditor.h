@@ -69,8 +69,9 @@ private:
 	std::make_unique<AudioParameterChoice>(
 		IDs::selector,
 		"MODO",
-		StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },  // Las tres opciones que tendrá el selector
-		0,                                // Valor inicial, en este caso "Opción 1" (índice 0)
-		AudioProcessorParameter::genericParameter
+		StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },  // Las tres opciones que tendr el selector
+		0,                              // Valor inicial, en este caso "Opcin 1" (
+ndice 0)
+		AudioProcessorameter::genericParameter
 	),
 */

@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Distortion.h
-    Created: 22 Feb 2019 3:58:00pm
-    Author:  Joonas
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -31,6 +21,8 @@ private:
 	static constexpr size_t numWaveShapers = 2;
 	dsp::WaveShaper<float> mWaveShapers[numWaveShapers];
 
+	std::vector<std::function<float(float)>> mWaveFunctions;
+	std::function<float(float)> mCurrentWaveFunction;
 
 	dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> mLowPassFilter, mHighPassFilter;
 	std::unique_ptr<dsp::Oversampling<float>> mOversampling;

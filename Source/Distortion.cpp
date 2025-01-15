@@ -1,76 +1,96 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Distortion.h"
 
-
 //==============================================================================
-Distortion::Distortion(AudioProcessorValueTreeState& vt): mParameters(vt),
-
-	mWaveShapers{ { [](float x) { return std::tanh(7.0f * x); } } },
-	mLowPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(44100.f, 20000.f)),
-	mHighPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(44100.f, 20.f))
+Distortion::Distortion(AudioProcessorValueTreeState& vt)
+    : mParameters(vt),
+    mSelector(0) // Inicializamos el selector
 {
-	mOversampling.reset(new dsp::Oversampling<float>(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, false));
+    mOversampling.reset(new dsp::Oversampling<float>(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, false));
+
+    // Define las funciones de onda
+    mWaveFunctions = {
+        [](float x) { return std::tanh(7.0f * x); },               // Función 0
+        [](float x) {
+            float highFreqBoost = x - 0.8f * std::tanh(x); // Atenúa bajas frecuencias
+            float emphasized = x + 0.4f * (highFreqBoost - x); // Realza los agudos
+            emphasized = emphasized * 1.2f; // Amplifica la señal
+            return std::clamp(emphasized, -0.9f, 0.9f);
+        },         // Función 1
+        [](float x) { return std::clamp(x, -4.0f, 4.0f); }         // Función 2
+    };
+
+    // Configura una función de onda inicial
+    mCurrentWaveFunction = mWaveFunctions[0];
 }
 
 Distortion::~Distortion()
 {
-	// Empty destructor
+    // Destructor vacío
 }
 
 void Distortion::prepare(dsp::ProcessSpec spec)
 {
-	// Initialize class variables
-	mSampleRate = static_cast<float>(spec.sampleRate);
-	mMaxBlockSize = spec.maximumBlockSize;
-	mNumChannels = spec.numChannels;
-	// Prepare
-	mInputVolume.prepare(spec);
-	mOutputVolume.prepare(spec);
-	mLowPassFilter.prepare(spec);
-	mHighPassFilter.prepare(spec);
+    mSampleRate = static_cast<float>(spec.sampleRate);
+    mMaxBlockSize = spec.maximumBlockSize;
+    mNumChannels = spec.numChannels;
 
-	mOversampling->initProcessing(static_cast<size_t> (mMaxBlockSize));
-	reset();
+    mInputVolume.prepare(spec);
+    mOutputVolume.prepare(spec);
+
+    mOversampling->initProcessing(static_cast<size_t>(mMaxBlockSize));
+    reset();
 }
 
 void Distortion::reset()
 {
-	mOversampling->reset();
-	mLowPassFilter.reset();
-	mHighPassFilter.reset();
+    mOversampling->reset();
 }
 
 void Distortion::process(dsp::ProcessContextReplacing<float> context)
 {
-	ScopedNoDenormals noDenormals;
+    ScopedNoDenormals noDenormals;
 
-	mInputVolume.process(context);
+    mInputVolume.process(context);
 
-	mHighPassFilter.process(context);
+    // Upsample
+    dsp::AudioBlock<float> oversampledBlock = mOversampling->processSamplesUp(context.getInputBlock());
 
-	dsp::AudioBlock<float> oversampledBlock  = mOversampling -> processSamplesUp(context.getInputBlock());
-	auto waveshaperContext = dsp::ProcessContextReplacing<float>(oversampledBlock);
+    // Aplica la función de onda actual manualmente
+    for (size_t channel = 0; channel < oversampledBlock.getNumChannels(); ++channel)
+    {
+        auto* samples = oversampledBlock.getChannelPointer(channel);
 
-	mWaveShapers[0].process(waveshaperContext);
-	waveshaperContext.getOutputBlock() *= 0.7f;
+        for (size_t sampleIndex = 0; sampleIndex < oversampledBlock.getNumSamples(); ++sampleIndex)
+        {
+            samples[sampleIndex] = mCurrentWaveFunction(samples[sampleIndex]);
+        }
+    }
 
-	// downsample
-	mOversampling->processSamplesDown(context.getOutputBlock());
+    oversampledBlock *= 0.7f; // Escala el volumen después del procesamiento
 
-	mLowPassFilter.process(context);
+    // Downsample
+    mOversampling->processSamplesDown(context.getOutputBlock());
 
-	mOutputVolume.process(context);
+    mOutputVolume.process(context);
 }
+
 
 void Distortion::updateParameters()
 {
-	float inputVolume = *mParameters.getRawParameterValue(IDs::inputVolume);
-	float outputVolume = *mParameters.getRawParameterValue(IDs::outputVolume);
-	int mode = *mParameters.getRawParameterValue(IDs::selector);
+    float inputVolume = *mParameters.getRawParameterValue(IDs::inputVolume);
+    float outputVolume = *mParameters.getRawParameterValue(IDs::outputVolume);
+    int selector = static_cast<int>(*mParameters.getRawParameterValue(IDs::selector));
 
-	auto inputdB = Decibels::decibelsToGain(inputVolume);
-	auto outputdB = Decibels::decibelsToGain(outputVolume);
+    auto inputdB = Decibels::decibelsToGain(inputVolume);
+    auto outputdB = Decibels::decibelsToGain(outputVolume);
 
-	if (mInputVolume.getGainLinear() != inputdB)     mInputVolume.setGainLinear(inputdB);
-	if (mOutputVolume.getGainLinear() != outputdB)   mOutputVolume.setGainLinear(outputdB);
+    if (mInputVolume.getGainLinear() != inputdB) mInputVolume.setGainLinear(inputdB);
+    if (mOutputVolume.getGainLinear() != outputdB) mOutputVolume.setGainLinear(outputdB);
+
+    // Actualiza la función de onda según el selector
+    if (selector >= 0 && selector < mWaveFunctions.size())
+    {
+        mCurrentWaveFunction = mWaveFunctions[selector];
+    }
 }
