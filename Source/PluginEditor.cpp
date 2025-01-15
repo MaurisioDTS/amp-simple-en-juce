@@ -197,17 +197,4 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mOutputVolumeSlider.setTextValueSuffix(" dB");
     mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::outputVolume, mOutputVolumeSlider));
     addAndMakeVisible(mOutputVolumeSlider);
-
-	// WET/DRY ======================================
-	// Label
-	mWetDryLabel.setText("DRY/WET", dontSendNotification);
-	mWetDryLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mWetDryLabel);
-	// Slider
-	mWetDrySlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mWetDrySlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
-    mWetDrySlider.setLookAndFeel(&knobLookAndFeel);
-	mWetDrySlider.setTextValueSuffix("%");
-	mWetDryAttachment.reset(new SliderAttachment(mParameter, IDs::wetDry, mWetDrySlider));
-	addAndMakeVisible(mWetDrySlider);
 }
