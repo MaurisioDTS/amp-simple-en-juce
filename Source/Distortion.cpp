@@ -12,15 +12,14 @@ Distortion::Distortion(AudioProcessorValueTreeState& vt): mParameters(vt), mSele
     //      basicamente guardo todas las funciones de onda para aplicarlas más tarde.
     //      se pueden añadir tantas funciones como quieras-
     //      y no reventar el programa por el camino.
-
     mWaveFunctions = {
-        [](float x) { return std::tanh(7.0f * x); },            //  softclipper
-        [](float x) {                                               
+        [](float x) { return std::tanh(5.0f * x); },            //  softclipper
+        [](float x) {
             float highFreqBoost = x - 0.8f * std::tanh(x);      //      (quito algo de bajo)
             float emphasized = x + 0.4f * (highFreqBoost - x);  //      (añado agudos)
-            emphasized = emphasized * 1.2f;                     //      (lo aumentamos y se lo damos al siguiente)
+            emphasized = emphasized * 5.2f;                     //      (lo aumentamos y se lo damos al siguiente)
             return std::clamp(emphasized, -0.9f, 0.9f);},       //  treblebooster
-        [](float x) { return std::clamp(x, -0.5f, 0.5f); }      //  hardclipper
+        [](float x) { return std::clamp(x,-0.7f,0.7f);}         //  hardclipper
     };
 
     // esto hace que la funcion por defecto sea la primera del array, el softclipper.
@@ -87,11 +86,12 @@ void Distortion::updateParameters()
 
     // =============================================
     //  aqui declaro que cuando el gain sube el out baja respecto a la cantidad de in puesta.
-    
-    outputVolume = outputVolume + (inputVolume * -1);
+    //  +12 para balancear lo que bajamos y que se escuche un poco más alto.
+    //  esta funcionalidad aún está en prueba.
+    outputVolume *= - ((inputVolume/2)+12);
 
     auto inputdB = Decibels::decibelsToGain(inputVolume);
-    auto outputdB = Decibels::decibelsToGain(outputVolume)+3;   // +3 para balancear lo que bajamos y que se escuche un poco más alto.
+    auto outputdB = Decibels::decibelsToGain(outputVolume);
 
     if (mInputVolume.getGainLinear() != inputdB) mInputVolume.setGainLinear(inputdB);
     if (mOutputVolume.getGainLinear() != outputdB) mOutputVolume.setGainLinear(outputdB);
