@@ -17,7 +17,7 @@ Distortion::Distortion(AudioProcessorValueTreeState& vt)
             emphasized = emphasized * 1.2f; // Amplifica la señal
             return std::clamp(emphasized, -0.9f, 0.9f);
         },         // Función 1
-        [](float x) { return std::clamp(x, -4.0f, 4.0f); }         // Función 2
+        [](float x) { return std::clamp(x, -0.5f, 0.5f); }         // Función 2
     };
 
     // Configura una función de onda inicial
