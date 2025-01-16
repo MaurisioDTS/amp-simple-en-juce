@@ -6,18 +6,26 @@ hago esto en mis tiempos libres pa aprender c y al arte del...
 
 ***digital signal processing***.
 
-![image](https://github.com/user-attachments/assets/a193807f-ed3b-4a8f-b8ea-5bee95fd8a9e)
+![Puginn UI](Images/Plugin-UI.png)
 
 
 ## esto pa k es
 
-bueno, el proposito de esto es distorsionar guitarras electricas (o lo k sea, en realidad). 
+bueno, el proposito de esto es distorsionar guitarras electricas (o lo k sea en realidad). 
 más especificamente es un "soft clip" overdrive.
 
 aqui hay una prueba de sonido. 
 *(acuerdate de activar el sonido)*
+**(LEER ABAJO)**
 
 https://github.com/user-attachments/assets/42701dfd-34c0-4c4c-8fd9-a63af31835f8
+### EL VIDEO ES DE UNA VERSIÓN MUY ANTERIOR, EL SONIDO PUEDE HABER CAMBIADO LIGERAMENTE
+
+## Acknowledgements
+he usado este repo como plantilla:
+https://github.com/joonastuo/Distortion
+
+
 
 ## ====================
 
