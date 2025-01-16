@@ -44,11 +44,12 @@ private:
     Slider mOutputVolumeSlider;
 
 	//	ComboBox
-	ComboBox mSelector;
+	ComboBox mSelectorBox;
 
 	// Labels
 	Label mInputVolumeLabel;
     Label mOutputVolumeLabel;
+    Label mSelectorLabel;
 
     // LAF 
     KnobLookAndFeel knobLookAndFeel;
@@ -59,19 +60,7 @@ private:
 
 	std::unique_ptr<SliderAttachment> mInputVolumeAttachment;
     std::unique_ptr<SliderAttachment> mOutputVolumeAttachment;
+    std::unique_ptr<ComboBoxParameterAttachment> mSelectorAttachment;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessorEditor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DistortionAudioProcessorEditor)
 };
-
-// ============================================
-// puta mierda 
-/*
-	std::make_unique<AudioParameterChoice>(
-		IDs::selector,
-		"MODO",
-		StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },  // Las tres opciones que tendr el selector
-		0,                              // Valor inicial, en este caso "Opcin 1" (
-ndice 0)
-		AudioProcessorameter::genericParameter
-	),
-*/

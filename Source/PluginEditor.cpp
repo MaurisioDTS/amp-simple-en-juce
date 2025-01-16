@@ -23,9 +23,10 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
 DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
 {
 	// Set the LOF of all sliders to nullptr
+	mOutputVolumeSlider.setLookAndFeel(nullptr);
+	mSelectorBox.setLookAndFeel(nullptr);
     mInputVolumeSlider.setLookAndFeel(nullptr);
-	mSelector.setLookAndFeel(nullptr);
-    mOutputVolumeSlider.setLookAndFeel(nullptr);
+    
 }
 
 //==============================================================================
@@ -33,16 +34,6 @@ void DistortionAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 }
-
-//==============================================================================
-// Components are added in the resized-method with FlexBox.
-// Input parameters:
-//		LEVEL: output volume of the effect chain
-//		LOW	 : frequency of a lowpass filter after the waveshaper
-//		HIGH : frequency of a highpass filter before the waveshaper
-//		DIS	 : input volume of the effects chain
-//
-//==============================================================================
 void DistortionAudioProcessorEditor::resized()
 {
 	// LEVEL==================================
@@ -70,6 +61,10 @@ void DistortionAudioProcessorEditor::resized()
 	selectorBox.alignContent = FlexBox::AlignContent::center;
 	selectorBox.justifyContent = FlexBox::JustifyContent::center;
 	selectorBox.flexDirection = FlexBox::Direction::column;
+	selectorBox.items.addArray({
+								makeLabel(mSelectorLabel),
+								makeLabel(mSelectorBox)
+								});
     
 	// MASTER ================================
 	FlexBox masterBox;
@@ -77,9 +72,9 @@ void DistortionAudioProcessorEditor::resized()
 	masterBox.justifyContent = FlexBox::JustifyContent::spaceAround;
 	masterBox.flexDirection = FlexBox::Direction::row;
 	masterBox.items.addArray({
-							   FlexItem(volumeBox).withFlex(1),
+							   FlexItem(gainBox).withFlex(1),
 							   FlexItem(selectorBox).withFlex(1),
-							   FlexItem(gainBox).withFlex(1)
+							   FlexItem(volumeBox).withFlex(1)
                              });
 
 	masterBox.performLayout(getLocalBounds().reduced(20, 20).toFloat());
@@ -100,9 +95,9 @@ FlexItem DistortionAudioProcessorEditor::makeLabel(Component & c)
 //==============================================================================
 void DistortionAudioProcessorEditor::initialiseGUI()
 {
-	// INPUT VOLUME ================================
+	// INPUT VOLUME =================================
 	// Label
-	mInputVolumeLabel.setText("MI MOTORA", dontSendNotification);
+	mInputVolumeLabel.setText("Gain", dontSendNotification);
 	mInputVolumeLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mInputVolumeLabel);
 
@@ -114,45 +109,37 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::inputVolume, mInputVolumeSlider));
 	addAndMakeVisible(mInputVolumeSlider);
 
+	//	COSAS DEL SELECTOR	==========================
+	//	label
+	mSelectorLabel.setText("Tipo", dontSendNotification);
+	mSelectorLabel.setJustificationType(Justification::centred);
+	addAndMakeVisible(mSelectorLabel);
+
 	//	ComboBox
-	mSelector.setText("selector", dontSendNotification);
-	mSelector.setJustificationType(Justification::centred);
-	mSelector.addItem("gScreamer", 1);
-	mSelector.addItem("trebleBrigther", 2);
-	mSelector.addItem("bSquasher", 3);
-	addAndMakeVisible(mSelector);
+	mSelectorBox.setText("Tipo", dontSendNotification);
+	mSelectorBox.setJustificationType(Justification::centred);
+	mSelectorBox.addItem("gScreamer", 1);
+	mSelectorBox.addItem("trebleBrigther", 2);
+	mSelectorBox.addItem("bSquasher", 3);
+	mSelectorBox.setSelectedId(1);
 
-
-	/** LOWPASS FILTER =================================
-	// Label
-	mLowPassLabel.setText("LOW", dontSendNotification);
-	mLowPassLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mLowPassLabel);
-	// Slider
-	mLowPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mLowPassSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
-	mLowPassSlider.setTextValueSuffix(" Hz");
-	mLowPassSlider.setLookAndFeel(&knobLookAndFeel);
-	mLowPassAttachment.reset(new SliderAttachment(mParameter, IDs::LPFreq, mLowPassSlider));
-	addAndMakeVisible(mLowPassSlider);
-
-	// HIGHPASS FILTER =================================
-	// Label
-	mHighPassLabel.setText("HIGH", dontSendNotification);
-	mHighPassLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mHighPassLabel);
-
-	// Slider
-	mHighPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mHighPassSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
-	mHighPassSlider.setTextValueSuffix(" Hz");
-	mHighPassSlider.setLookAndFeel(&knobLookAndFeel);
-	mHighPassAttachment.reset(new SliderAttachment(mParameter, IDs::HPFreq, mHighPassSlider));
-	addAndMakeVisible(mHighPassSlider); **/
+	//	aqui se me lia jaja ==========================
+	// 
+	//	bueno, "ComboBoxParameterAttachment" me pide un parametro "RangedAudioParameter".
+	//	a diferencia de los otros attachments que piden "AudioProcessorValueTreeState".
+	// 
+	//		lo que hacemos es sacar el parametro declarado en la clase pluginProcessor y-
+	//		castearlo para que se convierta en "AudioParameterChoice", la cual es una- 
+	//		clase hija de"RangedAudioParameter" y puede ser usada por el comboBoxParameter.
+	//
+	auto* selectorParam = dynamic_cast<juce::AudioParameterChoice*>(mParameter.getParameter("selector"));
+	
+	mSelectorAttachment.reset(new juce::ComboBoxParameterAttachment(*selectorParam, mSelectorBox));
+	addAndMakeVisible(mSelectorBox);
 	
 	// OUTPUT VOLUME ==================================
 	// Label
-    mOutputVolumeLabel.setText("ganancia", dontSendNotification);
+    mOutputVolumeLabel.setText("Level", dontSendNotification);
     mOutputVolumeLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(mOutputVolumeLabel);
    // Slider 

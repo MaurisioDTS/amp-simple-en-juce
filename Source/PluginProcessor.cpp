@@ -25,7 +25,7 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 		mParameters(*this, nullptr, Identifier("Distortion"),
 			{
 			  std::make_unique<AudioParameterFloat>(IDs::inputVolume,
-													"DIST",
+													"Gain",
 													NormalisableRange<float>(0.f, 60.f),
 													0.f,
 													" dB",
@@ -34,8 +34,8 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													nullptr
 													),
 			  std::make_unique<AudioParameterFloat>(IDs::outputVolume,
-													"LEVEL",
-													NormalisableRange<float>(-40.f, 40.f),
+													"Output Volume",
+													NormalisableRange<float>(-20.f, 20.f),
 													0.f,
 													" dB",
 													AudioProcessorParameter::genericParameter,
@@ -43,10 +43,10 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													nullptr
 													),
 			  std::make_unique<AudioParameterChoice>(IDs::selector,
-													"MODO",
+													"Mode",
 													StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },
 													0,                  
-													"modo",
+													"", //	string vacía porque este parametro no es una unidad de medida.
 													[](int value, int) {
 														switch (value) {
 															case 0: return "gScreamer";
@@ -61,19 +61,6 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 		mDistortion(mParameters)
 #endif
 {
-	//NormalisableRange<float> inputVolumeRange(0.0f, 60.0f, 0.0f, 1.0f);
-	//NormalisableRange<float> highPassRange(20.f, 20000.f, 0.f, 0.5f);
-	//NormalisableRange<float> lowPassRange(20.f, 20000.f, 0.f, 0.5f);
- //   NormalisableRange<float> outputVolumeRange(-40.0f, 40.0f, 0.0f, 1.0f );
-	//NormalisableRange<float> wetDryRange(0.f, 1.f);
-
-	//mParameters.createAndAddParameter(IDs::inputVolume, "DIST", "dB", inputVolumeRange, 0.0f, nullptr, nullptr);
-	//mParameters.createAndAddParameter(IDs::HPFreq, "Pre Highpass Freq", "Hz", highPassRange, 20.f, nullptr, nullptr);
-	//mParameters.createAndAddParameter(IDs::LPFreq, "Post Lowpass Freq", "Hz", lowPassRange, 20000.f, nullptr, nullptr);
- //   mParameters.createAndAddParameter(IDs::outputVolume, "LEVEL", "dB", outputVolumeRange, 0.0f, nullptr, nullptr);
-	//mParameters.createAndAddParameter(IDs::wetDry, "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
-	//
-	//mParameters.state = ValueTree("Distortion");
 }
 
 DistortionAudioProcessor::~DistortionAudioProcessor()
