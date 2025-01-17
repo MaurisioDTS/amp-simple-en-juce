@@ -5,14 +5,14 @@
               pluginVST3Category="Distortion,Fx" pluginAAXCategory="64" pluginManufacturerCode="MDTS"
               pluginCode="Mtra">
   <MAINGROUP id="xRmc4U" name="MI MOTORA">
+    <FILE id="Gcbrw8" name="PluginEditor.cpp" compile="1" resource="0"
+          file="Source/PluginEditor.cpp"/>
+    <FILE id="UB9C0M" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     <GROUP id="{99C726F3-CF36-3F52-0F88-E92B5AB1A179}" name="Source">
       <FILE id="bIt8P4" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="kUFEAW" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="A2PtUx" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="hHYVbq" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <GROUP id="{9A046439-1E03-3204-1E0A-320FEE09BFFE}" name="AudioDSP">
         <FILE id="bDJaUk" name="Distortion.cpp" compile="1" resource="0" file="Source/Distortion.cpp"/>
         <FILE id="uRba4d" name="Distortion.h" compile="0" resource="0" file="Source/Distortion.h"/>
