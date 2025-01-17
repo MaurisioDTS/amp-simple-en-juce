@@ -1,152 +1,107 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+  This is an automatically generated GUI class created by the Projucer!
 
-    It contains the basic framework code for a JUCE plugin editor.
+  Be careful when adding custom code to these files, as only the code within
+  the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
+  and re-saved.
+
+  Created with Projucer version: 6.1.5
+
+  ------------------------------------------------------------------------------
+
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
+//[Headers] You can add your own extra header files here...
+//[/Headers]
+
 #include "PluginEditor.h"
 
-//==============================================================================
-DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
-{
-    setSize (350, 150);
-	initialiseGUI();
-}
+
+//[MiscUserDefs] You can add your own user definitions and misc code here...
+//[/MiscUserDefs]
 
 //==============================================================================
-DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
+PluginEditor::PluginEditor ()
 {
-	// Set the LOF of all sliders to nullptr
-	mOutputVolumeSlider.setLookAndFeel(nullptr);
-	mSelectorBox.setLookAndFeel(nullptr);
-    mInputVolumeSlider.setLookAndFeel(nullptr);
-    
+    //[Constructor_pre] You can add your own custom stuff here..
+    //[/Constructor_pre]
+
+
+    //[UserPreSize]
+    //[/UserPreSize]
+
+    setSize (350, 400);
+
+
+    //[Constructor] You can add your own custom stuff here..
+    //[/Constructor]
 }
 
-//==============================================================================
-void DistortionAudioProcessorEditor::paint (Graphics& g)
+PluginEditor::~PluginEditor()
 {
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-}
-void DistortionAudioProcessorEditor::resized()
-{
-	// LEVEL==================================
-    FlexBox volumeBox;
-    volumeBox.alignContent = FlexBox::AlignContent::center;
-    volumeBox.justifyContent = FlexBox::JustifyContent::center;
-    volumeBox.flexDirection = FlexBox::Direction::column;
-    volumeBox.items.addArray({
-							  makeLabel(mOutputVolumeLabel),
-                              makeRotarySlider(mOutputVolumeSlider)
-							  });
+    //[Destructor_pre]. You can add your own custom destruction code here..
+    //[/Destructor_pre]
 
-	// DIST ==================================
-	FlexBox gainBox;
-	gainBox.alignContent = FlexBox::AlignContent::center;
-	gainBox.justifyContent = FlexBox::JustifyContent::center;
-	gainBox.flexDirection = FlexBox::Direction::column;
-	gainBox.items.addArray({ 
-							 makeLabel(mInputVolumeLabel),
-							 makeRotarySlider(mInputVolumeSlider)
-							});
 
-	// selector ==================================
-	FlexBox selectorBox;
-	selectorBox.alignContent = FlexBox::AlignContent::center;
-	selectorBox.justifyContent = FlexBox::JustifyContent::center;
-	selectorBox.flexDirection = FlexBox::Direction::column;
-	selectorBox.items.addArray({
-								makeLabel(mSelectorLabel),
-								makeLabel(mSelectorBox)
-								});
-    
-	// MASTER ================================
-	FlexBox masterBox;
-	masterBox.alignContent = FlexBox::AlignContent::center;
-	masterBox.justifyContent = FlexBox::JustifyContent::spaceAround;
-	masterBox.flexDirection = FlexBox::Direction::row;
-	masterBox.items.addArray({
-							   FlexItem(gainBox).withFlex(1),
-							   FlexItem(selectorBox).withFlex(1),
-							   FlexItem(volumeBox).withFlex(1)
-                             });
 
-	masterBox.performLayout(getLocalBounds().reduced(20, 20).toFloat());
+    //[Destructor]. You can add your own custom destruction code here..
+    //[/Destructor]
 }
 
 //==============================================================================
-FlexItem DistortionAudioProcessorEditor::makeRotarySlider(Component & c)
+void PluginEditor::paint (juce::Graphics& g)
 {
-	return FlexItem(c).withMinWidth(static_cast<float>(mSliderSize)).withMinHeight(static_cast<float>(mSliderSize));
+    //[UserPrePaint] Add your own custom painting code here..
+    //[/UserPrePaint]
+
+    g.fillAll (juce::Colour (0xff323e44));
+
+    //[UserPaint] Add your own custom painting code here..
+    //[/UserPaint]
 }
+
+void PluginEditor::resized()
+{
+    //[UserPreResize] Add your own custom resize code here..
+    //[/UserPreResize]
+
+    //[UserResized] Add your own custom resize handling here..
+    //[/UserResized]
+}
+
+
+
+//[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+//[/MiscUserCode]
+
 
 //==============================================================================
-FlexItem DistortionAudioProcessorEditor::makeLabel(Component & c)
-{
-	return FlexItem(c).withMinWidth(static_cast<float>(c.getWidth())).withMinHeight(20);
-}
+#if 0
+/*  -- Projucer information section --
 
-//==============================================================================
-void DistortionAudioProcessorEditor::initialiseGUI()
-{
-	// INPUT VOLUME =================================
-	// Label
-	mInputVolumeLabel.setText("Gain", dontSendNotification);
-	mInputVolumeLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mInputVolumeLabel);
+    This is where the Projucer stores the metadata that describe this GUI layout, so
+    make changes in here at your peril!
 
-	// Slider
-	mInputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mInputVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
-    mInputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
-	mInputVolumeSlider.setTextValueSuffix(" dB");
-	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::inputVolume, mInputVolumeSlider));
-	addAndMakeVisible(mInputVolumeSlider);
+BEGIN_JUCER_METADATA
 
-	//	COSAS DEL SELECTOR	==========================
-	//	label
-	mSelectorLabel.setText("Tipo", dontSendNotification);
-	mSelectorLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mSelectorLabel);
+<JUCER_COMPONENT documentType="Component" className="PluginEditor" componentName=""
+                 parentClasses="public juce::Component" constructorParams="" variableInitialisers=""
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="0" initialWidth="350" initialHeight="400">
+  <BACKGROUND backgroundColour="ff323e44"/>
+</JUCER_COMPONENT>
 
-	//	ComboBox
-	mSelectorBox.setText("Tipo", dontSendNotification);
-	mSelectorBox.setJustificationType(Justification::centred);
-	mSelectorBox.addItem("gScreamer", 1);
-	mSelectorBox.addItem("trebleBrigther", 2);
-	mSelectorBox.addItem("bSquasher", 3);
-	mSelectorBox.setSelectedId(1);
+END_JUCER_METADATA
+*/
+#endif
 
-	//	aqui se me lia jaja ==========================
-	// 
-	//	bueno, "ComboBoxParameterAttachment" me pide un parametro "RangedAudioParameter".
-	//	a diferencia de los otros attachments que piden "AudioProcessorValueTreeState".
-	// 
-	//		lo que hacemos es sacar el parametro declarado en la clase pluginProcessor y-
-	//		castearlo para que se convierta en "AudioParameterChoice", la cual es una- 
-	//		clase hija de"RangedAudioParameter" y puede ser usada por el comboBoxParameter.
-	//
-	auto* selectorParam = dynamic_cast<juce::AudioParameterChoice*>(mParameter.getParameter("selector"));
-	
-	mSelectorAttachment.reset(new juce::ComboBoxParameterAttachment(*selectorParam, mSelectorBox));
-	addAndMakeVisible(mSelectorBox);
-	
-	// OUTPUT VOLUME ==================================
-	// Label
-    mOutputVolumeLabel.setText("Level", dontSendNotification);
-    mOutputVolumeLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(mOutputVolumeLabel);
-   // Slider 
-    mOutputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    mOutputVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
-    mOutputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
-	mOutputVolumeSlider.setTextValueSuffix(" dB");
-    mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::outputVolume, mOutputVolumeSlider));
-    addAndMakeVisible(mOutputVolumeSlider);
-}
+
+//[EndFile] You can add extra defines here...
+//[/EndFile]
+

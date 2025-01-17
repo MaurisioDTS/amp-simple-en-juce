@@ -1,66 +1,65 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+  This is an automatically generated GUI class created by the Projucer!
 
-    It contains the basic framework code for a JUCE plugin editor.
+  Be careful when adding custom code to these files, as only the code within
+  the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
+  and re-saved.
+
+  Created with Projucer version: 6.1.5
+
+  ------------------------------------------------------------------------------
+
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "PluginProcessor.h"
-#include "MyKnobs.h"
-#include "Identifiers.h"
+//[Headers]     -- You can add your own extra header files here --
+#include <JuceHeader.h>
+//[/Headers]
+
+
 
 //==============================================================================
 /**
+                                                                    //[Comments]
+    An auto-generated component, created by the Projucer.
+
+    Describe your class and how it works here!
+                                                                    //[/Comments]
 */
-class DistortionAudioProcessorEditor  : public AudioProcessorEditor
+class PluginEditor  : public juce::Component
 {
 public:
-    DistortionAudioProcessorEditor (DistortionAudioProcessor&);
-    ~DistortionAudioProcessorEditor();
+    //==============================================================================
+    PluginEditor ();
+    ~PluginEditor() override;
 
     //==============================================================================
-    void paint (Graphics&) override;
+    //[UserMethods]     -- You can add your own custom methods in this section.
+    //[/UserMethods]
+
+    void paint (juce::Graphics& g) override;
     void resized() override;
-	FlexItem makeRotarySlider(Component& c);
-	FlexItem makeLabel(Component& c);
-	void initialiseGUI();
+
+
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    DistortionAudioProcessor& processor;
-	AudioProcessorValueTreeState& mParameter;
+    //[UserVariables]   -- You can add your own custom variables in this section.
+    //[/UserVariables]
 
-	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    //==============================================================================
 
-	// Sliders
-	Slider mInputVolumeSlider;
-    Slider mOutputVolumeSlider;
 
-	//	ComboBox
-	ComboBox mSelectorBox;
-
-	// Labels
-	Label mInputVolumeLabel;
-    Label mOutputVolumeLabel;
-    Label mSelectorLabel;
-
-    // LAF 
-    KnobLookAndFeel knobLookAndFeel;
-    
-	int mSliderSize = 70;
-	int mTextBoxHeight = 14;
-	int mTextBoxWidth = 120;
-
-	std::unique_ptr<SliderAttachment> mInputVolumeAttachment;
-    std::unique_ptr<SliderAttachment> mOutputVolumeAttachment;
-    std::unique_ptr<ComboBoxParameterAttachment> mSelectorAttachment;
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DistortionAudioProcessorEditor)
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginEditor)
 };
+
+//[EndFile] You can add extra defines here...
+//[/EndFile]
+
