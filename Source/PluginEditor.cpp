@@ -15,7 +15,7 @@
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
 {
-    setSize (350, 150);
+    setSize (400, 150);
 	initialiseGUI();
 }
 
@@ -26,7 +26,7 @@ DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
 	mOutputVolumeSlider.setLookAndFeel(nullptr);
 	mSelectorBox.setLookAndFeel(nullptr);
     mInputVolumeSlider.setLookAndFeel(nullptr);
-    
+	mBypassButton.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -65,16 +65,25 @@ void DistortionAudioProcessorEditor::resized()
 								makeLabel(mSelectorLabel),
 								makeLabel(mSelectorBox)
 								});
+	// botón bypass ==================================
+	FlexBox bypassBox;
+	//bypassBox.alignContent = FlexBox::AlignContent::center;
+	bypassBox.justifyContent = FlexBox::JustifyContent::center;
+	bypassBox.flexDirection = FlexBox::Direction::column;
+	bypassBox.items.addArray({
+								makeLabel(mBypassButton)
+								});
     
-	// MASTER ================================
+	// la caja donde se guarda todo ================================
 	FlexBox masterBox;
 	masterBox.alignContent = FlexBox::AlignContent::center;
-	masterBox.justifyContent = FlexBox::JustifyContent::spaceAround;
+	masterBox.justifyContent = FlexBox::JustifyContent::center;
 	masterBox.flexDirection = FlexBox::Direction::row;
 	masterBox.items.addArray({
 							   FlexItem(gainBox).withFlex(1),
 							   FlexItem(selectorBox).withFlex(1),
-							   FlexItem(volumeBox).withFlex(1)
+							   FlexItem(volumeBox).withFlex(1),
+							   FlexItem(bypassBox).withFlex(1)
                              });
 
 	masterBox.performLayout(getLocalBounds().reduced(20, 20).toFloat());
@@ -125,12 +134,12 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 
 	//	aqui se me lia jaja ==========================
 	// 
-	//	bueno, "ComboBoxParameterAttachment" me pide un parametro "RangedAudioParameter".
+	//	bueno, "ComboBoxParameterAttachment" me pide un parametro "RangedAudioParameter",
 	//	a diferencia de los otros attachments que piden "AudioProcessorValueTreeState".
 	// 
 	//		lo que hacemos es sacar el parametro declarado en la clase pluginProcessor y-
 	//		castearlo para que se convierta en "AudioParameterChoice", la cual es una- 
-	//		clase hija de"RangedAudioParameter" y puede ser usada por el comboBoxParameter.
+	//		clase hija de "RangedAudioParameter" y puede ser usada por el comboBoxParameter.
 	//
 	auto* selectorParam = dynamic_cast<juce::AudioParameterChoice*>(mParameter.getParameter("selector"));
 	
@@ -149,4 +158,10 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mOutputVolumeSlider.setTextValueSuffix(" dB");
     mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::outputVolume, mOutputVolumeSlider));
     addAndMakeVisible(mOutputVolumeSlider);
+
+	// TOGGLE DE BYPASS ===============================
+
+	mBypassButton.setButtonText("Bypass");
+	mBypassButton.onClick = [this] { processor.bypass =! processor.bypass; };
+	addAndMakeVisible(mBypassButton);
 }

@@ -19,7 +19,7 @@ Distortion::Distortion(AudioProcessorValueTreeState& vt): mParameters(vt), mSele
             float emphasized = x + 0.4f * (highFreqBoost - x);  //      (añado agudos)
             emphasized = emphasized * 5.2f;                     //      (lo aumentamos y se lo damos al siguiente)
             return std::clamp(emphasized, -0.9f, 0.9f);},       //  treblebooster
-        [](float x) { return std::clamp(x,-0.7f,0.7f);}         //  hardclipper
+        [](float x) { return std::clamp(x,-0.5f,0.8f);}         //  hardclipper
     };
 
     // esto hace que la funcion por defecto sea la primera del array, el softclipper.
@@ -49,6 +49,9 @@ void Distortion::reset()
     mOversampling->reset();
 }
 
+//  ===========================================================================
+// 
+//      aqui es donde surge la magia
 void Distortion::process(dsp::ProcessContextReplacing<float> context)
 {
     ScopedNoDenormals noDenormals;
@@ -57,9 +60,8 @@ void Distortion::process(dsp::ProcessContextReplacing<float> context)
     // Upsample
     dsp::AudioBlock<float> oversampledBlock = mOversampling->processSamplesUp(context.getInputBlock());
 
-    // ==============================
-    // aplico la funcion de onda directamente sin usar waveshaper
-
+    //  ==============================
+    //      aplico la funcion de onda directamente sin usar waveshaper
     for (size_t channel = 0; channel < oversampledBlock.getNumChannels(); ++channel)
     {
         auto* samples = oversampledBlock.getChannelPointer(channel);
@@ -69,8 +71,8 @@ void Distortion::process(dsp::ProcessContextReplacing<float> context)
             samples[sampleIndex] = mCurrentWaveFunction(samples[sampleIndex]);
         }
     }
-
-    oversampledBlock *= 0.7f; // Escala el volumen después del procesamiento
+    // reduzco un poco el volumen despues de aplicar la funcion
+    oversampledBlock *= 0.4f;
 
     // Downsample
     mOversampling->processSamplesDown(context.getOutputBlock());
@@ -84,21 +86,11 @@ void Distortion::updateParameters()
     float outputVolume = *mParameters.getRawParameterValue(IDs::outputVolume);
     int selector = static_cast<int>(*mParameters.getRawParameterValue(IDs::selector));
 
-    // =============================================
-    //  aqui declaro que cuando el gain sube el out baja respecto a la cantidad de in puesta.
-    //  +12 para balancear lo que bajamos y que se escuche un poco más alto.
-    //  esta funcionalidad aún está en prueba.
-    outputVolume *= - ((inputVolume/2)+12);
+    mCurrentWaveFunction = mWaveFunctions[selector];    // aqui antes había un control de error, pero voy a prescindir de el.
 
     auto inputdB = Decibels::decibelsToGain(inputVolume);
     auto outputdB = Decibels::decibelsToGain(outputVolume);
 
     if (mInputVolume.getGainLinear() != inputdB) mInputVolume.setGainLinear(inputdB);
     if (mOutputVolume.getGainLinear() != outputdB) mOutputVolume.setGainLinear(outputdB);
-
-    // este if cambia la función de onda respecto al selector.
-    if (selector >= 0 && selector < mWaveFunctions.size())
-    {
-        mCurrentWaveFunction = mWaveFunctions[selector];
-    }
 }

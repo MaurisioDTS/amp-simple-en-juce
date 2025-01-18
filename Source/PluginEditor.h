@@ -51,6 +51,9 @@ private:
     Label mOutputVolumeLabel;
     Label mSelectorLabel;
 
+    // textButtons
+    TextButton mBypassButton;
+
     // LAF 
     KnobLookAndFeel knobLookAndFeel;
     
