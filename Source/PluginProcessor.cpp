@@ -14,51 +14,52 @@
 //==============================================================================
 DistortionAudioProcessor::DistortionAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
-		mParameters(*this, nullptr, Identifier("Distortion"),
-			{
-			  std::make_unique<AudioParameterFloat>(IDs::inputVolume,
-													"Gain",
-													NormalisableRange<float>(0.f, 60.f),
-													0.f,
-													" dB",
-													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
-													nullptr
-													),
-			  std::make_unique<AudioParameterFloat>(IDs::outputVolume,
-													"Output Volume",
-													NormalisableRange<float>(-20.f, 20.f),
-													0.f,
-													" dB",
-													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
-													nullptr
-													),
-			  std::make_unique<AudioParameterChoice>(IDs::selector,
-													"Mode",
-													StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },
-													0,                  
-													"", //	string vacía porque este parametro no es una unidad de medida.
-													[](int value, int) {
-														switch (value) {
-															case 0: return "gScreamer";
-															case 1: return "trebleBrigther";
-															case 2: return "bSquasher";
-															default: return "pos no sé mi loco";
-															}
-														},
-													nullptr
-													)
-			}),
-		mDistortion(mParameters)
+	: AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+		.withInput("Input", AudioChannelSet::stereo(), true)
+#endif
+		.withOutput("Output", AudioChannelSet::stereo(), true)
+#endif
+	),
+	mParameters(*this, nullptr, Identifier("Distortion"),
+		{
+		  std::make_unique<AudioParameterFloat>(IDs::inputVolume,
+												"Gain",
+												NormalisableRange<float>(0.f, 60.f),
+												0.f,
+												" dB",
+												AudioProcessorParameter::genericParameter,
+												[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+												nullptr
+												),
+		  std::make_unique<AudioParameterFloat>(IDs::outputVolume,
+												"Output Volume",
+												NormalisableRange<float>(-20.f, 20.f),
+												0.f,
+												" dB",
+												AudioProcessorParameter::genericParameter,
+												[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+												nullptr
+												),
+		  std::make_unique<AudioParameterChoice>(IDs::selector,
+												"Mode",
+												StringArray{ "gScreamer", "trebleBrigther", "bSquasher" },
+												0,
+												"", //	string vacía porque este parametro no es una unidad de medida.
+												[](int value, int) {
+													switch (value) {
+														case 0: return "gScreamer";
+														case 1: return "trebleBrigther";
+														case 2: return "bSquasher";
+														default: return "pos no sé mi loco";
+														}
+													},
+												nullptr
+												)
+		}),
+	mDistortion(mParameters),
+	bypass(false)
 #endif
 {
 }
@@ -171,6 +172,8 @@ bool DistortionAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 
 void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+	if (bypass) { return; } // si resulta ser false, procesa cosas. si no, pues no.
+
 	auto totalNumInputChannels = getTotalNumInputChannels();
 	auto totalNumOutputChannels = getTotalNumOutputChannels();
 

@@ -24,6 +24,8 @@ public:
     DistortionAudioProcessor();
     ~DistortionAudioProcessor();
 
+    bool bypass = false;
+
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
